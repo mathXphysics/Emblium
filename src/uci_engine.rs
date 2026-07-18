@@ -97,6 +97,10 @@ impl UciEngine {
         self.send(&format!("go depth {depth}"))
     }
 
+    pub fn go_infinite(&mut self) -> std::io::Result<()> {
+        self.send("go infinite")
+    }
+
     pub fn go_time(&mut self, wtime: u32, btime: u32, winc: u32, binc: u32) -> std::io::Result<()> {
         self.send(&format!("go wtime {wtime} btime {btime} winc {winc} binc {binc}"))
     }
