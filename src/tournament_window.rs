@@ -25,20 +25,30 @@ enum RunnerMsg {
 }
 
 pub fn open_tournament_window() {
-    let mut win = Window::new(200, 150, 620, 560, "Turnier & SPRT");
+    let mut win = Window::new(200, 150, 620, 560, "Emblium - Turnier & SPRT");
 
     let mut root = Pack::new(15, 15, 590, 530, "");
     root.set_spacing(6);
 
     let mut engine_a_label = Frame::new(0, 0, 590, 20, "Engine A (Test-Engine, z.B. neue Emble-Version):");
     engine_a_label.set_align(Align::Left | Align::Inside);
-    let mut engine_a_input = Input::new(0, 0, 590, 26, "");
+    let mut engine_a_row = Pack::new(0, 0, 590, 26, "");
+    engine_a_row.set_type(fltk::group::PackType::Horizontal);
+    engine_a_row.set_spacing(6);
+    let mut engine_a_input = Input::new(0, 0, 490, 26, "");
     engine_a_input.set_value("/usr/games/stockfish");
+    let mut engine_a_browse = Button::new(0, 0, 94, 26, "Durchsuchen...");
+    engine_a_row.end();
 
     let mut engine_b_label = Frame::new(0, 0, 590, 20, "Engine B (Referenz/Gegner):");
     engine_b_label.set_align(Align::Left | Align::Inside);
-    let mut engine_b_input = Input::new(0, 0, 590, 26, "");
+    let mut engine_b_row = Pack::new(0, 0, 590, 26, "");
+    engine_b_row.set_type(fltk::group::PackType::Horizontal);
+    engine_b_row.set_spacing(6);
+    let mut engine_b_input = Input::new(0, 0, 490, 26, "");
     engine_b_input.set_value("/usr/games/stockfish");
+    let mut engine_b_browse = Button::new(0, 0, 94, 26, "Durchsuchen...");
+    engine_b_row.end();
 
     let mut params_row = Pack::new(0, 0, 590, 26, "");
     params_row.set_type(fltk::group::PackType::Horizontal);
@@ -71,6 +81,32 @@ pub fn open_tournament_window() {
     root.end();
     win.end();
     win.show();
+
+    // ---------- Durchsuchen-Buttons für Engine-Pfade ----------
+    {
+        let mut engine_a_input = engine_a_input.clone();
+        engine_a_browse.set_callback(move |_| {
+            let mut chooser = fltk::dialog::NativeFileChooser::new(fltk::dialog::FileDialogType::BrowseFile);
+            chooser.set_title("Engine A auswählen");
+            chooser.show();
+            let path = chooser.filename();
+            if !path.as_os_str().is_empty() {
+                engine_a_input.set_value(&path.to_string_lossy());
+            }
+        });
+    }
+    {
+        let mut engine_b_input = engine_b_input.clone();
+        engine_b_browse.set_callback(move |_| {
+            let mut chooser = fltk::dialog::NativeFileChooser::new(fltk::dialog::FileDialogType::BrowseFile);
+            chooser.set_title("Engine B auswählen");
+            chooser.show();
+            let path = chooser.filename();
+            if !path.as_os_str().is_empty() {
+                engine_b_input.set_value(&path.to_string_lossy());
+            }
+        });
+    }
 
     // ---------- Einzelpartie ----------
     {
